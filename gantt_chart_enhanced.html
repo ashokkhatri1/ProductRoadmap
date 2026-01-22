@@ -565,687 +565,95 @@
     </div>
 
     <script>
-        // Enhanced project data with all requested fields
-        const projectData = [
-            { 
-                workstream: "Data Import", 
-                feature: "Data and Document Hub", 
-                status: "Done", 
-                startDate: "9/30/2025", 
-                endDate: "11/30/2025",
-                dependencies: [],
-                researchRequired: false,
-                resources: ["Data Import Team"],
-                clientCommitment: "State Street",
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap"
-            },
-            { 
-                workstream: "Data Import", 
-                feature: "Data folders", 
-                status: "Done", 
-                startDate: "9/30/2025", 
-                endDate: "11/30/2025",
-                dependencies: [],
-                researchRequired: false,
-                resources: ["Data Import Team"],
-                clientCommitment: "State Street",
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap"
-            },
-            { 
-                workstream: "Data Import", 
-                feature: "Data Pipelines", 
-                status: "Done", 
-                startDate: "9/30/2025", 
-                endDate: "12/15/2025",
-                dependencies: [],
-                researchRequired: false,
-                resources: ["Data Import Team"],
-                clientCommitment: "State Street",
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap"
-            },
-            { 
-                workstream: "Data Import", 
-                feature: "Data Extraction", 
-                status: "In Progress", 
-                startDate: "12/15/2025", 
-                endDate: "1/31/2026",
-                dependencies: ["Data Pipelines"],
-                researchRequired: true,
-                resources: ["Data Import Team"],
-                clientCommitment: "State Street",
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap"
-            },
-            { 
-                workstream: "Data Import", 
-                feature: "MM specific Transformation", 
-                status: "In Progress", 
-                startDate: "1/15/2026", 
-                endDate: "2/28/2026",
-                dependencies: ["Data Extraction"],
-                researchRequired: false,
-                resources: ["Data Import Team"],
-                clientCommitment: "State Street",
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap"
-            },
-            { 
-                workstream: "Data Import", 
-                feature: "Schema Mapping", 
-                status: "To do", 
-                startDate: "2/15/2026", 
-                endDate: "3/31/2026",
-                dependencies: ["Data Extraction"],
-                researchRequired: true,
-                researchStartDate: "1/15/2026",
-                researchEndDate: "2/15/2026",
-                resources: ["Data Import Team"],
-                clientCommitment: "State Street",
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap"
-            },
-            { 
-                workstream: "Data Import", 
-                feature: "Validation", 
-                status: "Done", 
-                startDate: "9/30/2025", 
-                endDate: "12/15/2025",
-                dependencies: [],
-                researchRequired: false,
-                resources: ["Data Import Team"],
-                clientCommitment: false,
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Data Import", 
-                feature: "Generic Transformation", 
-                status: "To do", 
-                startDate: "4/1/2026", 
-                endDate: "5/30/2026",
-                dependencies: ["Data Extraction", "Schema mapping"],
-                researchRequired: false,
-                resources: ["Data Import Team"],
-                clientCommitment: "None",
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap"
-            },
-            { 
-                workstream: "Data Import", 
-                feature: "Modular UI", 
-                status: "In Progress", 
-                startDate: "1/1/2026", 
-                endDate: "3/31/2026",
-                dependencies: [],
-                researchRequired: false,
-                resources: ["Frontend Team"],
-                clientCommitment: false,
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1445638236/Micro-Frontend+Architecture+Executive+Summary"
-            },
-            { 
-                workstream: "Manager Module", 
-                feature: "Custom MM DI", 
-                status: "To do", 
-                startDate: "3/31/2026", 
-                endDate: "4/30/2026",
-                dependencies: ["None"],
-                researchRequired: true,
-                researchStartDate: "1/21/2026",
-                researchEndDate: "2/15/2026",
-                resources: ["Data Import Team", "MM Team"],
-                clientCommitment: "State Street",
-                risk: "Medium",
-                contingency: "Use existing  MM DI",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Data Import", 
-                feature: "MM Integration", 
-                status: "To do", 
-                startDate: "3/31/2026", 
-                endDate: "5/30/2026",
-                dependencies: ["Modular UI", "Schema Mapping"],
-                researchRequired: true,
-                researchStartDate: "2/15/2026",
-                researchEndDate: "3/15/2026",
-                resources: ["Data Import Team", "MM Team"],
-                clientCommitment: "State Street",
-                risk: "Medium",
-                contingency: "Use existing MM DI",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Data Import", 
-                feature: "Unstructured Data extraction", 
-                status: "To do", 
-                startDate: "5/30/2026", 
-                endDate: "7/30/2026",
-                dependencies: ["Data Extraction"],
-                researchRequired: true,
-                resources: [ "Data Import Team"],
-                clientCommitment: false,
-                risk: "Medium",
-                contingency: "",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Data Import", 
-                feature: "Prompt management", 
-                status: "To do", 
-                startDate: "5/30/2026", 
-                endDate: "7/30/2026",
-                dependencies: ["Unstructured Data extraction"],
-                researchRequired: true,
-                resources: ["Data Import Team"],
-                clientCommitment: false,
-                risk: "Medium",
-                contingency: "None required",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Data Import", 
-                feature: "Private Credit platform integration", 
-                status: "To do", 
-                startDate: "6/30/2026", 
-                endDate: "9/30/2026",
-                dependencies: ["Modular UI", "Entitlements", "Data Import"],
-                researchRequired: false,
-                resources: ["Data Import Team", "Platform Team"],
-                clientCommitment: false,
-                risk: "Medium",
-                contingency: "None required",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap"
-            },
-            { 
-                workstream: "Access and Entitlements", 
-                feature: "Use in Data Import", 
-                status: "To do", 
-                startDate: "1/15/2026", 
-                endDate: "3/31/2026",
-                dependencies: [],
-                researchRequired: true,
-                resources: ["Platform Team", "Data Import Team"],
-                clientCommitment: true,
-                risk: "High",
-                contingency: "Use Keycloak for authentication",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/904265907/Entitlements+in+as+a+service"
-            },
-            { 
-                workstream: "Access and Entitlements", 
-                feature: "Integration into MM for trustee use case", 
-                status: "To do", 
-                startDate: "3/31/2026", 
-                endDate: "6/30/2026",
-                dependencies: ["Use in Data Import"],
-                researchRequired: false,
-                resources: ["Platform Team", "MM Team"],
-                clientCommitment: true,
-                risk: "Medium",
-                contingency: "Use Keycloak for authentication",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/904265907/Entitlements+in+as+a+service"
-            },
-            { 
-                workstream: "Access and Entitlements", 
-                feature: "Integration into Private Credit Platform", 
-                status: "To do", 
-                startDate: "6/30/2026", 
-                endDate: "9/30/2026",
-                dependencies: ["Integration into MM for trustee use case"],
-                researchRequired: false,
-                resources: ["Platform Team", "Data Import Team"],
-                clientCommitment: false,
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/904265907/Entitlements+in+as+a+service"
-            },
-            { 
-                workstream: "Manager Module", 
-                feature: "MM 2.0 Rollout", 
-                status: "In Progress", 
-                startDate: "11/15/2025", 
-                endDate: "1/31/2026",
-                dependencies: [],
-                researchRequired: false,
-                resources: ["MM Team", "QA Team", "Product Manager"],
-                clientCommitment: true,
-                risk: "Medium",
-                contingency: "None required",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/SAV/pages/1202136535/2.0.0+Release+dates+by+client"
-            },
-            { 
-                workstream: "Manager Module", 
-                feature: "ES removal from compliance", 
-                status: "In Progress", 
-                startDate: "12/1/2025", 
-                endDate: "2/28/2026",
-                dependencies: [],
-                researchRequired: false,
-                resources: ["MM Team"],
-                clientCommitment:"PGIM",
-                risk: "Medium",
-                contingency: "Keep ES as fallback temporarily",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Manager Module", 
-                feature: "Tech Debt Mongo update, Compliance engine refactor", 
-                status: "To do", 
-                startDate: "2/1/2026", 
-                endDate: "3/31/2026",
-                dependencies: ["None"],
-                researchRequired: false,
-                resources: ["MM Team"],
-                clientCommitment: false,
-                risk: "Medium",
-                contingency: "Incremental updates",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/SAV/pages/1223819670/Manager+Module+-+Tech+Debt"
-            },
-            { 
-                workstream: "Manager Module", 
-                feature: "Tech debt ES removal from daily load", 
-                status: "To do", 
-                startDate: "2/1/2026", 
-                endDate: "3/31/2026",
-                dependencies: ["ES removal from compliance", "custom MM DI",  "Data Import MM Integration"],
-                researchRequired: false,
-                resources: ["MM Team", "Data Import Team"],
-                clientCommitment: "PGIM",
-                risk: "High",
-                contingency: "Maintain ES process",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/SAV/pages/1549633085/Manager+Module+Data+Import+version+2+-+Draft+Design"
-            },
-            { 
-                workstream: "Manager Module", 
-                feature: "API 2.0 Rollout", 
-                status: "To do", 
-                startDate: "4/30/2026", 
-                endDate: "5/30/2026",
-                dependencies: ["MM 2.0 Rollout"],
-                researchRequired: true,
-                resources: ["MM Team"],
-                clientCommitment: false,
-                risk: "High",
-                contingency: "Maintain API 1.0 compatibility",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/SAV/pages/1202101126/MM+2.0+APIs"
-            },
-            { 
-                workstream: "Manager Module", 
-                feature: "Deal override enhancements", 
-                status: "To do", 
-                startDate: "2/15/2026", 
-                endDate: "3/31/2026",
-                dependencies: [],
-                researchRequired: false,
-                resources: ["MM Team"],
-                clientCommitment: "State Street, Monroe",
-                risk: "Medium",
-                contingency: "Keep existing override logic",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/SAV/pages/1154417336/Data+overrride+management+with+files+and+UI"
-            },
-            { 
-                workstream: "Manager Module", 
-                feature: "WSO API Integration", 
-                status: "To do", 
-                startDate: "4/30/2026", 
-                endDate: "6/30/2026",
-                dependencies: ["None"],
-                researchRequired: true,
-                resources: ["MM Team"],
-                clientCommitment: "Cross Ocean",
-                risk: "Medium",
-                contingency: "Manual data import from WSO",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Manager Module", 
-                feature: "LevPro Integration", 
-                status: "Done", 
-                startDate: "9/30/2025", 
-                endDate: "12/31/2025",
-                dependencies: [],
-                researchRequired: false,
-                resources: [ "MM Team"],
-                clientCommitment: "AGL",
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1101632718/MM+Hypo+trade+-+LevPro+Integration"
-            },
-            { 
-                workstream: "Manager Module", 
-                feature: "Compliance Library", 
-                status: "To do", 
-                startDate: "6/30/2026", 
-                endDate: "9/30/2026",
-                dependencies: ["Tech Debt Mongo update, Compliance engine refactor"],
-                researchRequired: true,
-                resources: ["MM Team"],
-                clientCommitment: "State street",
-                risk: "Medium",
-                contingency: "Use existing compliance rules",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Manager Module", 
-                feature: "Waterfall model integration into MM", 
-                status: "To do", 
-                startDate: "1/31/2026", 
-                endDate: "5/31/2026",
-                dependencies: ["Waterfall model output to MM"],
-                researchRequired: false,
-                resources: ["MM Team", "Waterfall Team"],
-                clientCommitment: "State street",
-                risk: "High",
-                contingency: "External waterfall calculations",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/ISH/pages/1140002204/Manager+Module+-+Waterfall+Integration+project"
-            },
-            { 
-                workstream: "Manager Module", 
-                feature: "View Management", 
-                status: "To do", 
-                startDate: "6/30/2026", 
-                endDate: "9/30/2026",
-                dependencies: ["MM 2.0 Rollout"],
-                researchRequired: false,
-                resources: ["MM Team", "Frontend Team"],
-                clientCommitment: false,
-                risk: "Low",
-                contingency: "Fixed view configurations",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Manager Module", 
-                feature: "Dashboard Integration for apollo", 
-                status: "To do", 
-                startDate: "3/31/2026", 
-                endDate: "5/30/2026",
-                dependencies: ["Apollo dashbords"],
-                researchRequired: false,
-                resources: ["MM Team", "Dashboarding Team"],
-                clientCommitment: "Apollo/Redding Ridge",
-                risk: "High",
-                contingency: "Standalone dashboards",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Manager Module", 
-                feature: "Enhancements to Hypo trading", 
-                status: "To do", 
-                startDate: "6/30/2026", 
-                endDate: "9/30/2026",
-                dependencies: [],
-                researchRequired: true,
-                resources: [ "MM Team"],
-                clientCommitment: false,
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Manager Module", 
-                feature: "Optimizer UI", 
-                status: "To do", 
-                startDate: "9/30/2026", 
-                endDate: "12/31/2026",
-                dependencies: [],
-                researchRequired: true,
-                resources: ["Frontend Team", "Optimizer Team", "UX Designers"],
-                clientCommitment: true,
-                risk: "Low",
-                contingency: "API Interface for optimizer",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Waterfall", 
-                feature: "Watefall input JSON from MM", 
-                status: "To do", 
-                startDate: "1/31/2026", 
-                endDate: "3/31/2026",
-                dependencies: ["MM 2.0 Rollout"],
-                researchRequired: false,
-                resources: ["Waterfall Team", "MM Team"],
-                clientCommitment: "State street",
-                risk: "Medium",
-                contingency: "None required",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/ISH/pages/1140002204/Manager+Module+-+Waterfall+Integration+project"
-            },
-            { 
-                workstream: "Waterfall", 
-                feature: "Waterfall model output to MM", 
-                status: "To do", 
-                startDate: "3/1/2026", 
-                endDate: "5/31/2026",
-                dependencies: ["Watefall input JSON from MM"],
-                researchRequired: false,
-                resources: ["Waterfall Team", "MM Team"],
-                clientCommitment: "State street",
-                risk: "Medium",
-                contingency: "None required",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/ISH/pages/1140002204/Manager+Module+-+Waterfall+Integration+project"
-            },
-            { 
-                workstream: "Waterfall", 
-                feature: "Waterfall Library", 
-                status: "To do", 
-                startDate: "5/31/2026", 
-                endDate: "7/31/2026",
-                dependencies: ["Waterfall model output to MM"],
-                researchRequired: true,
-                resources: ["Waterfall Team", "Backend Engineers"],
-                clientCommitment: false,
-                risk: "Medium",
-                contingency: "TBD",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/ISH/pages/1140002204/Manager+Module+-+Waterfall+Integration+project"
-            },
-            { 
-                workstream: "Waterfall", 
-                feature: "Deal creator integration into MM", 
-                status: "To do", 
-                startDate: "6/30/2026", 
-                endDate: "9/30/2026",
-                dependencies: ["Waterfall Library", "Waterfall model integration into MM"],
-                researchRequired: false,
-                resources: ["Waterfall Team", "MM Team", "Frontend Team"],
-                clientCommitment: "State street",
-                risk: "Medium",
-                contingency: "Scripting for deal creation",
-                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/ISH/pages/1140002204/Manager+Module+-+Waterfall+Integration+project"
-            },
-            { 
-                workstream: "Recon", 
-                feature: "Recon to use the data from common data layer", 
-                status: "To do", 
-                startDate: "6/30/2026", 
-                endDate: "9/30/2026",
-                dependencies: ["MM Integration"],
-                researchRequired: false,
-                resources: ["Data Import Team", "Private Credit Platform Team"],
-                clientCommitment: false,
-                risk: "Medium",
-                contingency: "Direct database access",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Recon", 
-                feature: "Recon app switching with MM", 
-                status: "To do", 
-                startDate: "6/1/2026", 
-                endDate: "6/30/2026",
-                dependencies: ["MM 2.0 Rollout"],
-                researchRequired: false,
-                resources: ["Recon Team", "MM Team"],
-                clientCommitment: false,
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Dashboarding", 
-                feature: "Apollo dashbords", 
-                status: "To do", 
-                startDate: "2/1/2026", 
-                endDate: "3/31/2026",
-                dependencies: [],
-                researchRequired: false,
-                resources: ["Dashboarding Team", "MM Team"],
-                clientCommitment: "Apollo/Redding Ridge",
-                risk: "High",
-                contingency: "None required",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Dashboarding", 
-                feature: "More generic dashboards", 
-                status: "To do", 
-                startDate: "3/31/2026", 
-                endDate: "6/30/2026",
-                dependencies: ["Apollo dashbords"],
-                researchRequired: true,
-                resources: ["Dashboarding Team", "Product Team"],
-                clientCommitment: false,
-                risk: "Low",
-                contingency: "Template-based dashboards",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Dashboarding", 
-                feature: "Integration into MM", 
-                status: "To do", 
-                startDate: "3/31/2026", 
-                endDate: "6/30/2026",
-                dependencies: ["Apollo dashbords", "MM 2.0 Rollout"],
-                researchRequired: false,
-                resources: ["Dashboarding Team", "MM Team"],
-                clientCommitment: false,
-                risk: "Medium",
-                contingency: "TBD",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Dashboarding", 
-                feature: "Integration into new Private credit platform", 
-                status: "To do", 
-                startDate: "3/31/2026", 
-                endDate: "6/30/2026",
-                dependencies: ["More generic dashboards"],
-                researchRequired: false,
-                resources: ["Dashboarding Team", "Private Credit Platform Team"],
-                clientCommitment: true,
-                risk: "Low",
-                contingency: "Separate dashboard instance",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Dashboarding", 
-                feature: "Sisense replacement capabilities", 
-                status: "To do", 
-                startDate: "9/30/2026", 
-                endDate: "12/31/2026",
-                dependencies: ["More generic dashboards"],
-                researchRequired: true,
-                resources: ["Dashboarding Team"],
-                clientCommitment: false,
-                risk: "Medium",
-                contingency: "Keep Sisense running in parallel",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Private Credit Platform", 
-                feature: "Data Import and Entitlements", 
-                status: "To do", 
-                startDate: "3/31/2026", 
-                endDate: "6/30/2026",
-                dependencies: ["Use in Data Import"],
-                researchRequired: false,
-                resources: ["Platform Team", "Data Import Team"],
-                clientCommitment: false,
-                risk: "Medium",
-                contingency: "Manual data import process",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Private Credit Platform", 
-                feature: "Integrate compliance engine", 
-                status: "To do", 
-                startDate: "3/31/2026", 
-                endDate: "6/30/2026",
-                dependencies: ["Compliance Library", "Data Import and Entitlements"],
-                researchRequired: false,
-                resources: ["Platform Team", "Compliance Team"],
-                clientCommitment: true,
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Private Credit Platform", 
-                feature: "Integrate Dashboards", 
-                status: "To do", 
-                startDate: "6/30/2026", 
-                endDate: "9/30/2026",
-                dependencies: ["Integration into new Private credit platform"],
-                researchRequired: false,
-                resources: ["Platform Team", "Dashboarding Team"],
-                clientCommitment: false,
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Private Credit Platform", 
-                feature: "Integrate waterfall and deal creator", 
-                status: "To do", 
-                startDate: "9/30/2026", 
-                endDate: "12/31/2026",
-                dependencies: ["Deal creator integration into MM"],
-                researchRequired: false,
-                resources: ["Platform Team", "Waterfall Team"],
-                clientCommitment: false,
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Private Credit Platform", 
-                feature: "Exploration service", 
-                status: "To do", 
-                startDate: "6/30/2026", 
-                endDate: "9/30/2026",
-                dependencies: ["Data Import and Entitlements"],
-                researchRequired: true,
-                resources: ["Platform Team", "Product Team"],
-                clientCommitment: false,
-                risk: "Low",
-                contingency: "None required",
-                confluenceLink: ""
-            },
-            { 
-                workstream: "Private Credit Platform", 
-                feature: "Lender Migration", 
-                status: "To do", 
-                startDate: "1/1/2027", 
-                endDate: "3/31/2027",
-                dependencies: ["Integrate waterfall and deal creator", "Integrate compliance engine"],
-                researchRequired: false,
-                resources: ["Platform Team", "Migration Team", "QA Team"],
-                clientCommitment: true,
-                risk: "High",
-                contingency: "Phased migration with dual-run period",
-                confluenceLink: ""
+        // Function to parse CSV
+        function parseCSV(csv) {
+            const lines = csv.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                
+                const values = [];
+                let current = '';
+                let inQuotes = false;
+                
+                for (let char of lines[i]) {
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        values.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                values.push(current.trim());
+                
+                if (values.length > 1) {
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header] = values[index] || '';
+                    });
+                    data.push(row);
+                }
             }
-        ];
+            return data;
+        }
+
+        // Function to convert CSV row to project data format
+        function convertCSVToProjectData(csvData) {
+            return csvData.map(row => {
+                const dependencies = row.Dependencies ? row.Dependencies.split(',').map(d => d.trim()).filter(d => d) : [];
+                const resources = row.Resources ? row.Resources.split(',').map(r => r.trim()).filter(r => r) : [];
+                const researchRequired = row['Research Required']?.toLowerCase() === 'yes';
+                
+                const item = {
+                    workstream: row.Workstream || '',
+                    feature: row.Feature || '',
+                    status: row.Status || 'To do',
+                    startDate: row['Start Date'] || '',
+                    endDate: row['End Date'] || '',
+                    dependencies: dependencies,
+                    researchRequired: researchRequired,
+                    resources: resources,
+                    clientCommitment: row['Client Commitment'] === 'Yes' ? true : (row['Client Commitment'] === 'No' ? false : row['Client Commitment']),
+                    risk: row.Risk || 'Low',
+                    contingency: row.Contingency || '',
+                    confluenceLink: row['Confluence Link'] || ''
+                };
+                
+                // Add research dates if they exist
+                if (row['Research Start Date']) {
+                    item.researchStartDate = row['Research Start Date'];
+                }
+                if (row['Research End Date']) {
+                    item.researchEndDate = row['Research End Date'];
+                }
+                
+                return item;
+            });
+        }
+
+        // Load data from CSV
+        let projectData = [];
+        
+        fetch('roadmap_data.csv')
+            .then(response => response.text())
+            .then(csvText => {
+                const csvData = parseCSV(csvText);
+                projectData = convertCSVToProjectData(csvData);
+                
+                // Initialize the chart after data is loaded
+                initializeChart();
+            })
+            .catch(error => {
+                console.error('Error loading CSV:', error);
+                alert('Error loading roadmap data. Please ensure roadmap_data.csv is in the same directory as this HTML file.');
+            });
+
+        // Function to initialize the chart (will be called after data loads)
+        function initializeChart() {
 
         // Parse dates and calculate timeline
         const parseDate = (dateStr) => {
@@ -1588,6 +996,7 @@
         // Initial render
         renderGantt();
         renderStats();
+    } // End of initializeChart function
     </script>
 </body>
 </html>
