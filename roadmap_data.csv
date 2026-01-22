@@ -24,7 +24,7 @@ Manager Module,API 2.0 Rollout,To do,4/30/2026,5/30/2026,MM 2.0 Rollout,Yes,,,MM
 Manager Module,Deal override enhancements,To do,2/15/2026,3/31/2026,,No,,,MM Team,"State Street, Monroe",Medium,Keep existing override logic,https://moodysanalytics.atlassian.net/wiki/spaces/SAV/pages/1154417336/Data+overrride+management+with+files+and+UI
 Manager Module,WSO API Integration,To do,4/30/2026,6/30/2026,None,Yes,,,MM Team,Cross Ocean,Medium,Manual data import from WSO,
 Manager Module,LevPro Integration,Done,9/30/2025,12/31/2025,,No,,,MM Team,AGL,Low,None required,https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1101632718/MM+Hypo+trade+-+LevPro+Integration
-Manager Module,Compliance Library,To do,6/30/2026,9/30/2026,Tech Debt Mongo update, Compliance engine refactor,Yes,,,MM Team,State street,Medium,Use existing compliance rules,
+Manager Module,Compliance Library,To do,6/30/2026,9/30/2026,Tech Debt Mongo update/Compliance engine refactor,Yes,,,MM Team,State street,Medium,Use existing compliance rules,
 Manager Module,Waterfall model integration into MM,To do,1/31/2026,5/31/2026,Waterfall model output to MM,No,,,"MM Team, Waterfall Team",State street,High,External waterfall calculations,https://moodysanalytics.atlassian.net/wiki/spaces/ISH/pages/1140002204/Manager+Module+-+Waterfall+Integration+project
 Manager Module,View Management,To do,6/30/2026,9/30/2026,MM 2.0 Rollout,No,,,"MM Team, Frontend Team",No,Low,Fixed view configurations,
 Manager Module,Dashboard Integration for apollo,To do,3/31/2026,5/30/2026,Apollo dashbords,No,,,"MM Team, Dashboarding Team",Apollo/Redding Ridge,High,Standalone dashboards,
