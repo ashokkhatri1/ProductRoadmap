@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Project Gantt Chart - Workstream Timeline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 100%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            padding: 20px 30px;
+            background: #f9f9f9;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .control-group select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-left: auto;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .icon-legend {
+            display: flex;
+            gap: 15px;
+            padding: 15px 30px;
+            background: #fafafa;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+            flex-wrap: wrap;
+        }
+
+        .icon-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .gantt-container {
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        .gantt-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 1200px;
+        }
+
+        .gantt-header {
+            display: grid;
+            grid-template-columns: 200px 300px 100px 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .gantt-row {
+            display: grid;
+            grid-template-columns: 200px 300px 100px 1fr;
+            gap: 10px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .gantt-row:hover {
+            background: #f9f9f9;
+        }
+
+        .workstream-cell {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        .feature-cell {
+            color: #333;
+            font-size: 14px;
+        }
+
+        .indicators-cell {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .indicator-badge {
+            font-size: 16px;
+            cursor: help;
+        }
+
+        .timeline-cell {
+            position: relative;
+            height: 30px;
+        }
+
+        .timeline-bar {
+            position: absolute;
+            height: 100%;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .timeline-bar:hover {
+            transform: scaleY(1.2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .timeline-bar.has-dependency {
+            border-left: 4px solid #FFD700;
+        }
+
+        .timeline-bar.has-risk {
+            border-right: 4px solid #FF4444;
+        }
+
+        .status-done {
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+        }
+
+        .status-in-progress {
+            background: linear-gradient(90deg, #FF9800, #F57C00);
+        }
+
+        .status-to-do {
+            background: linear-gradient(90deg, #2196F3, #1976D2);
+        }
+
+        .research-bar {
+            background: linear-gradient(90deg, #1565C0, #0D47A1);
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+            opacity: 0.85;
+            z-index: 1;
+        }
+
+        .implementation-bar {
+            z-index: 2;
+        }
+
+        .timeline-labels {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #666;
+            grid-column: 3;
+        }
+
+        .timeline-label {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5em;
+            margin: 0;
+        }
+
+        .close {
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: scale(1.2);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .detail-section {
+            margin-bottom: 25px;
+        }
+
+        .detail-section h3 {
+            color: #667eea;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .detail-value {
+            color: #333;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        .badge-done {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .badge-in-progress {
+            background: #FF9800;
+            color: white;
+        }
+
+        .badge-to-do {
+            background: #2196F3;
+            color: white;
+        }
+
+        .badge-high {
+            background: #FF4444;
+            color: white;
+        }
+
+        .badge-medium {
+            background: #FFA500;
+            color: white;
+        }
+
+        .badge-low {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .resource-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .resource-chip {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+        }
+
+        .dependency-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .dependency-item {
+            padding: 8px;
+            margin-bottom: 5px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            border-left: 3px solid #FFD700;
+        }
+
+        .risk-box {
+            background: #fff3cd;
+            border-left: 4px solid #FFA500;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .risk-box.high {
+            background: #f8d7da;
+            border-left-color: #FF4444;
+        }
+
+        .confluence-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .confluence-link:hover {
+            background: #5568d3;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f9f9f9;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .gantt-header,
+            .gantt-row {
+                grid-template-columns: 150px 200px 80px 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>MM/Private Credit Platform Roadmap</h1>
+            <p>Workstream Features & Delivery Schedule with Dependencies, Resources & Risks (Sep 2025 - Mar 2027)</p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="workstreamFilter">Filter by Workstream:</label>
+                <select id="workstreamFilter">
+                    <option value="all">All Workstreams</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="statusFilter">Filter by Status:</label>
+                <select id="statusFilter">
+                    <option value="all">All Statuses</option>
+                    <option value="Done">Done</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="To do">To do</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="riskFilter">Filter by Risk:</label>
+                <select id="riskFilter">
+                    <option value="all">All Risks</option>
+                    <option value="High">High Risk</option>
+                    <option value="Medium">Medium Risk</option>
+                    <option value="Low">Low Risk</option>
+                </select>
+            </div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color status-done"></div>
+                    <span>Done</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color status-in-progress"></div>
+                    <span>In Progress</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color status-to-do"></div>
+                    <span>To do</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(90deg, #1565C0, #0D47A1); border: 2px dashed rgba(255, 255, 255, 0.5);"></div>
+                    <span>Research Phase</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="icon-legend">
+            <div class="icon-legend-item">
+                <span style="font-size: 16px;">🔗</span>
+                <span>Has Dependencies</span>
+            </div>
+            <div class="icon-legend-item">
+                <span style="font-size: 16px;">🔬</span>
+                <span>Research Required</span>
+            </div>
+            <div class="icon-legend-item">
+                <span style="font-size: 16px;">👥</span>
+                <span>Resources Assigned</span>
+            </div>
+            <div class="icon-legend-item">
+                <span style="font-size: 16px;">⚠️</span>
+                <span>Has Risks</span>
+            </div>
+            <div class="icon-legend-item">
+                <span style="font-size: 16px;">📌</span>
+                <span>Client Commitment</span>
+            </div>
+            <div class="icon-legend-item">
+                <span style="font-size: 16px;">📄</span>
+                <span>Confluence Page</span>
+            </div>
+        </div>
+
+        <div class="gantt-container">
+            <div class="gantt-chart" id="ganttChart"></div>
+        </div>
+
+        <div class="stats" id="stats"></div>
+    </div>
+
+    <!-- Modal for detailed view -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Feature Details</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be dynamically inserted -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced project data with all requested fields
+        const projectData = [
+            { 
+                workstream: "Data Import", 
+                feature: "Data and Document Hub", 
+                status: "Done", 
+                startDate: "9/30/2025", 
+                endDate: "11/30/2025",
+                dependencies: [],
+                researchRequired: false,
+                resources: ["Data Import Team"],
+                clientCommitment: "State Street",
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap"
+            },
+            { 
+                workstream: "Data Import", 
+                feature: "Data folders", 
+                status: "Done", 
+                startDate: "9/30/2025", 
+                endDate: "11/30/2025",
+                dependencies: [],
+                researchRequired: false,
+                resources: ["Data Import Team"],
+                clientCommitment: "State Street",
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap"
+            },
+            { 
+                workstream: "Data Import", 
+                feature: "Data Pipelines", 
+                status: "Done", 
+                startDate: "9/30/2025", 
+                endDate: "12/15/2025",
+                dependencies: [],
+                researchRequired: false,
+                resources: ["Data Import Team"],
+                clientCommitment: "State Street",
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap"
+            },
+            { 
+                workstream: "Data Import", 
+                feature: "Data Extraction", 
+                status: "In Progress", 
+                startDate: "12/15/2025", 
+                endDate: "1/31/2026",
+                dependencies: ["Data Pipelines"],
+                researchRequired: true,
+                resources: ["Data Import Team"],
+                clientCommitment: "State Street",
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap"
+            },
+            { 
+                workstream: "Data Import", 
+                feature: "MM specific Transformation", 
+                status: "In Progress", 
+                startDate: "1/15/2026", 
+                endDate: "2/28/2026",
+                dependencies: ["Data Extraction"],
+                researchRequired: false,
+                resources: ["Data Import Team"],
+                clientCommitment: "State Street",
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap"
+            },
+            { 
+                workstream: "Data Import", 
+                feature: "Schema Mapping", 
+                status: "To do", 
+                startDate: "2/15/2026", 
+                endDate: "3/31/2026",
+                dependencies: ["Data Extraction"],
+                researchRequired: true,
+                researchStartDate: "1/15/2026",
+                researchEndDate: "2/15/2026",
+                resources: ["Data Import Team"],
+                clientCommitment: "State Street",
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap"
+            },
+            { 
+                workstream: "Data Import", 
+                feature: "Validation", 
+                status: "Done", 
+                startDate: "9/30/2025", 
+                endDate: "12/15/2025",
+                dependencies: [],
+                researchRequired: false,
+                resources: ["Data Import Team"],
+                clientCommitment: false,
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Data Import", 
+                feature: "Generic Transformation", 
+                status: "To do", 
+                startDate: "4/1/2026", 
+                endDate: "5/30/2026",
+                dependencies: ["Data Extraction", "Schema mapping"],
+                researchRequired: false,
+                resources: ["Data Import Team"],
+                clientCommitment: "None",
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap"
+            },
+            { 
+                workstream: "Data Import", 
+                feature: "Modular UI", 
+                status: "In Progress", 
+                startDate: "1/1/2026", 
+                endDate: "3/31/2026",
+                dependencies: [],
+                researchRequired: false,
+                resources: ["Frontend Team"],
+                clientCommitment: false,
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1445638236/Micro-Frontend+Architecture+Executive+Summary"
+            },
+            { 
+                workstream: "Manager Module", 
+                feature: "Custom MM DI", 
+                status: "To do", 
+                startDate: "3/31/2026", 
+                endDate: "4/30/2026",
+                dependencies: ["None"],
+                researchRequired: true,
+                researchStartDate: "1/21/2026",
+                researchEndDate: "2/15/2026",
+                resources: ["Data Import Team", "MM Team"],
+                clientCommitment: "State Street",
+                risk: "Medium",
+                contingency: "Use existing  MM DI",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Data Import", 
+                feature: "MM Integration", 
+                status: "To do", 
+                startDate: "3/31/2026", 
+                endDate: "5/30/2026",
+                dependencies: ["Modular UI", "Schema Mapping"],
+                researchRequired: true,
+                researchStartDate: "2/15/2026",
+                researchEndDate: "3/15/2026",
+                resources: ["Data Import Team", "MM Team"],
+                clientCommitment: "State Street",
+                risk: "Medium",
+                contingency: "Use existing MM DI",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Data Import", 
+                feature: "Unstructured Data extraction", 
+                status: "To do", 
+                startDate: "5/30/2026", 
+                endDate: "7/30/2026",
+                dependencies: ["Data Extraction"],
+                researchRequired: true,
+                resources: [ "Data Import Team"],
+                clientCommitment: false,
+                risk: "Medium",
+                contingency: "",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Data Import", 
+                feature: "Prompt management", 
+                status: "To do", 
+                startDate: "5/30/2026", 
+                endDate: "7/30/2026",
+                dependencies: ["Unstructured Data extraction"],
+                researchRequired: true,
+                resources: ["Data Import Team"],
+                clientCommitment: false,
+                risk: "Medium",
+                contingency: "None required",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Data Import", 
+                feature: "Private Credit platform integration", 
+                status: "To do", 
+                startDate: "6/30/2026", 
+                endDate: "9/30/2026",
+                dependencies: ["Modular UI", "Entitlements", "Data Import"],
+                researchRequired: false,
+                resources: ["Data Import Team", "Platform Team"],
+                clientCommitment: false,
+                risk: "Medium",
+                contingency: "None required",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap"
+            },
+            { 
+                workstream: "Access and Entitlements", 
+                feature: "Use in Data Import", 
+                status: "To do", 
+                startDate: "1/15/2026", 
+                endDate: "3/31/2026",
+                dependencies: [],
+                researchRequired: true,
+                resources: ["Platform Team", "Data Import Team"],
+                clientCommitment: true,
+                risk: "High",
+                contingency: "Use Keycloak for authentication",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/904265907/Entitlements+in+as+a+service"
+            },
+            { 
+                workstream: "Access and Entitlements", 
+                feature: "Integration into MM for trustee use case", 
+                status: "To do", 
+                startDate: "3/31/2026", 
+                endDate: "6/30/2026",
+                dependencies: ["Use in Data Import"],
+                researchRequired: false,
+                resources: ["Platform Team", "MM Team"],
+                clientCommitment: true,
+                risk: "Medium",
+                contingency: "Use Keycloak for authentication",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/904265907/Entitlements+in+as+a+service"
+            },
+            { 
+                workstream: "Access and Entitlements", 
+                feature: "Integration into Private Credit Platform", 
+                status: "To do", 
+                startDate: "6/30/2026", 
+                endDate: "9/30/2026",
+                dependencies: ["Integration into MM for trustee use case"],
+                researchRequired: false,
+                resources: ["Platform Team", "Data Import Team"],
+                clientCommitment: false,
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/904265907/Entitlements+in+as+a+service"
+            },
+            { 
+                workstream: "Manager Module", 
+                feature: "MM 2.0 Rollout", 
+                status: "In Progress", 
+                startDate: "11/15/2025", 
+                endDate: "1/31/2026",
+                dependencies: [],
+                researchRequired: false,
+                resources: ["MM Team", "QA Team", "Product Manager"],
+                clientCommitment: true,
+                risk: "Medium",
+                contingency: "None required",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/SAV/pages/1202136535/2.0.0+Release+dates+by+client"
+            },
+            { 
+                workstream: "Manager Module", 
+                feature: "ES removal from compliance", 
+                status: "In Progress", 
+                startDate: "12/1/2025", 
+                endDate: "2/28/2026",
+                dependencies: [],
+                researchRequired: false,
+                resources: ["MM Team"],
+                clientCommitment:"PGIM",
+                risk: "Medium",
+                contingency: "Keep ES as fallback temporarily",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Manager Module", 
+                feature: "Tech Debt Mongo update, Compliance engine refactor", 
+                status: "To do", 
+                startDate: "2/1/2026", 
+                endDate: "3/31/2026",
+                dependencies: ["None"],
+                researchRequired: false,
+                resources: ["MM Team"],
+                clientCommitment: false,
+                risk: "Medium",
+                contingency: "Incremental updates",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/SAV/pages/1223819670/Manager+Module+-+Tech+Debt"
+            },
+            { 
+                workstream: "Manager Module", 
+                feature: "Tech debt ES removal from daily load", 
+                status: "To do", 
+                startDate: "2/1/2026", 
+                endDate: "3/31/2026",
+                dependencies: ["ES removal from compliance", "custom MM DI",  "Data Import MM Integration"],
+                researchRequired: false,
+                resources: ["MM Team", "Data Import Team"],
+                clientCommitment: "PGIM",
+                risk: "High",
+                contingency: "Maintain ES process",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/SAV/pages/1549633085/Manager+Module+Data+Import+version+2+-+Draft+Design"
+            },
+            { 
+                workstream: "Manager Module", 
+                feature: "API 2.0 Rollout", 
+                status: "To do", 
+                startDate: "4/30/2026", 
+                endDate: "5/30/2026",
+                dependencies: ["MM 2.0 Rollout"],
+                researchRequired: true,
+                resources: ["MM Team"],
+                clientCommitment: false,
+                risk: "High",
+                contingency: "Maintain API 1.0 compatibility",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/SAV/pages/1202101126/MM+2.0+APIs"
+            },
+            { 
+                workstream: "Manager Module", 
+                feature: "Deal override enhancements", 
+                status: "To do", 
+                startDate: "2/15/2026", 
+                endDate: "3/31/2026",
+                dependencies: [],
+                researchRequired: false,
+                resources: ["MM Team"],
+                clientCommitment: "State Street, Monroe",
+                risk: "Medium",
+                contingency: "Keep existing override logic",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/SAV/pages/1154417336/Data+overrride+management+with+files+and+UI"
+            },
+            { 
+                workstream: "Manager Module", 
+                feature: "WSO API Integration", 
+                status: "To do", 
+                startDate: "4/30/2026", 
+                endDate: "6/30/2026",
+                dependencies: ["None"],
+                researchRequired: true,
+                resources: ["MM Team"],
+                clientCommitment: "Cross Ocean",
+                risk: "Medium",
+                contingency: "Manual data import from WSO",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Manager Module", 
+                feature: "LevPro Integration", 
+                status: "Done", 
+                startDate: "9/30/2025", 
+                endDate: "12/31/2025",
+                dependencies: [],
+                researchRequired: false,
+                resources: [ "MM Team"],
+                clientCommitment: "AGL",
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1101632718/MM+Hypo+trade+-+LevPro+Integration"
+            },
+            { 
+                workstream: "Manager Module", 
+                feature: "Compliance Library", 
+                status: "To do", 
+                startDate: "6/30/2026", 
+                endDate: "9/30/2026",
+                dependencies: ["Tech Debt Mongo update, Compliance engine refactor"],
+                researchRequired: true,
+                resources: ["MM Team"],
+                clientCommitment: "State street",
+                risk: "Medium",
+                contingency: "Use existing compliance rules",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Manager Module", 
+                feature: "Waterfall model integration into MM", 
+                status: "To do", 
+                startDate: "1/31/2026", 
+                endDate: "5/31/2026",
+                dependencies: ["Waterfall model output to MM"],
+                researchRequired: false,
+                resources: ["MM Team", "Waterfall Team"],
+                clientCommitment: "State street",
+                risk: "High",
+                contingency: "External waterfall calculations",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/ISH/pages/1140002204/Manager+Module+-+Waterfall+Integration+project"
+            },
+            { 
+                workstream: "Manager Module", 
+                feature: "View Management", 
+                status: "To do", 
+                startDate: "6/30/2026", 
+                endDate: "9/30/2026",
+                dependencies: ["MM 2.0 Rollout"],
+                researchRequired: false,
+                resources: ["MM Team", "Frontend Team"],
+                clientCommitment: false,
+                risk: "Low",
+                contingency: "Fixed view configurations",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Manager Module", 
+                feature: "Dashboard Integration for apollo", 
+                status: "To do", 
+                startDate: "3/31/2026", 
+                endDate: "5/30/2026",
+                dependencies: ["Apollo dashbords"],
+                researchRequired: false,
+                resources: ["MM Team", "Dashboarding Team"],
+                clientCommitment: "Apollo/Redding Ridge",
+                risk: "High",
+                contingency: "Standalone dashboards",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Manager Module", 
+                feature: "Enhancements to Hypo trading", 
+                status: "To do", 
+                startDate: "6/30/2026", 
+                endDate: "9/30/2026",
+                dependencies: [],
+                researchRequired: true,
+                resources: [ "MM Team"],
+                clientCommitment: false,
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Manager Module", 
+                feature: "Optimizer UI", 
+                status: "To do", 
+                startDate: "9/30/2026", 
+                endDate: "12/31/2026",
+                dependencies: [],
+                researchRequired: true,
+                resources: ["Frontend Team", "Optimizer Team", "UX Designers"],
+                clientCommitment: true,
+                risk: "Low",
+                contingency: "API Interface for optimizer",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Waterfall", 
+                feature: "Watefall input JSON from MM", 
+                status: "To do", 
+                startDate: "1/31/2026", 
+                endDate: "3/31/2026",
+                dependencies: ["MM 2.0 Rollout"],
+                researchRequired: false,
+                resources: ["Waterfall Team", "MM Team"],
+                clientCommitment: "State street",
+                risk: "Medium",
+                contingency: "None required",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/ISH/pages/1140002204/Manager+Module+-+Waterfall+Integration+project"
+            },
+            { 
+                workstream: "Waterfall", 
+                feature: "Waterfall model output to MM", 
+                status: "To do", 
+                startDate: "3/1/2026", 
+                endDate: "5/31/2026",
+                dependencies: ["Watefall input JSON from MM"],
+                researchRequired: false,
+                resources: ["Waterfall Team", "MM Team"],
+                clientCommitment: "State street",
+                risk: "Medium",
+                contingency: "None required",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/ISH/pages/1140002204/Manager+Module+-+Waterfall+Integration+project"
+            },
+            { 
+                workstream: "Waterfall", 
+                feature: "Waterfall Library", 
+                status: "To do", 
+                startDate: "5/31/2026", 
+                endDate: "7/31/2026",
+                dependencies: ["Waterfall model output to MM"],
+                researchRequired: true,
+                resources: ["Waterfall Team", "Backend Engineers"],
+                clientCommitment: false,
+                risk: "Medium",
+                contingency: "TBD",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/ISH/pages/1140002204/Manager+Module+-+Waterfall+Integration+project"
+            },
+            { 
+                workstream: "Waterfall", 
+                feature: "Deal creator integration into MM", 
+                status: "To do", 
+                startDate: "6/30/2026", 
+                endDate: "9/30/2026",
+                dependencies: ["Waterfall Library", "Waterfall model integration into MM"],
+                researchRequired: false,
+                resources: ["Waterfall Team", "MM Team", "Frontend Team"],
+                clientCommitment: "State street",
+                risk: "Medium",
+                contingency: "Scripting for deal creation",
+                confluenceLink: "https://moodysanalytics.atlassian.net/wiki/spaces/ISH/pages/1140002204/Manager+Module+-+Waterfall+Integration+project"
+            },
+            { 
+                workstream: "Recon", 
+                feature: "Recon to use the data from common data layer", 
+                status: "To do", 
+                startDate: "6/30/2026", 
+                endDate: "9/30/2026",
+                dependencies: ["MM Integration"],
+                researchRequired: false,
+                resources: ["Data Import Team", "Private Credit Platform Team"],
+                clientCommitment: false,
+                risk: "Medium",
+                contingency: "Direct database access",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Recon", 
+                feature: "Recon app switching with MM", 
+                status: "To do", 
+                startDate: "6/1/2026", 
+                endDate: "6/30/2026",
+                dependencies: ["MM 2.0 Rollout"],
+                researchRequired: false,
+                resources: ["Recon Team", "MM Team"],
+                clientCommitment: false,
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Dashboarding", 
+                feature: "Apollo dashbords", 
+                status: "To do", 
+                startDate: "2/1/2026", 
+                endDate: "3/31/2026",
+                dependencies: [],
+                researchRequired: false,
+                resources: ["Dashboarding Team", "MM Team"],
+                clientCommitment: "Apollo/Redding Ridge",
+                risk: "High",
+                contingency: "None required",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Dashboarding", 
+                feature: "More generic dashboards", 
+                status: "To do", 
+                startDate: "3/31/2026", 
+                endDate: "6/30/2026",
+                dependencies: ["Apollo dashbords"],
+                researchRequired: true,
+                resources: ["Dashboarding Team", "Product Team"],
+                clientCommitment: false,
+                risk: "Low",
+                contingency: "Template-based dashboards",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Dashboarding", 
+                feature: "Integration into MM", 
+                status: "To do", 
+                startDate: "3/31/2026", 
+                endDate: "6/30/2026",
+                dependencies: ["Apollo dashbords", "MM 2.0 Rollout"],
+                researchRequired: false,
+                resources: ["Dashboarding Team", "MM Team"],
+                clientCommitment: false,
+                risk: "Medium",
+                contingency: "TBD",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Dashboarding", 
+                feature: "Integration into new Private credit platform", 
+                status: "To do", 
+                startDate: "3/31/2026", 
+                endDate: "6/30/2026",
+                dependencies: ["More generic dashboards"],
+                researchRequired: false,
+                resources: ["Dashboarding Team", "Private Credit Platform Team"],
+                clientCommitment: true,
+                risk: "Low",
+                contingency: "Separate dashboard instance",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Dashboarding", 
+                feature: "Sisense replacement capabilities", 
+                status: "To do", 
+                startDate: "9/30/2026", 
+                endDate: "12/31/2026",
+                dependencies: ["More generic dashboards"],
+                researchRequired: true,
+                resources: ["Dashboarding Team"],
+                clientCommitment: false,
+                risk: "Medium",
+                contingency: "Keep Sisense running in parallel",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Private Credit Platform", 
+                feature: "Data Import and Entitlements", 
+                status: "To do", 
+                startDate: "3/31/2026", 
+                endDate: "6/30/2026",
+                dependencies: ["Use in Data Import"],
+                researchRequired: false,
+                resources: ["Platform Team", "Data Import Team"],
+                clientCommitment: false,
+                risk: "Medium",
+                contingency: "Manual data import process",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Private Credit Platform", 
+                feature: "Integrate compliance engine", 
+                status: "To do", 
+                startDate: "3/31/2026", 
+                endDate: "6/30/2026",
+                dependencies: ["Compliance Library", "Data Import and Entitlements"],
+                researchRequired: false,
+                resources: ["Platform Team", "Compliance Team"],
+                clientCommitment: true,
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Private Credit Platform", 
+                feature: "Integrate Dashboards", 
+                status: "To do", 
+                startDate: "6/30/2026", 
+                endDate: "9/30/2026",
+                dependencies: ["Integration into new Private credit platform"],
+                researchRequired: false,
+                resources: ["Platform Team", "Dashboarding Team"],
+                clientCommitment: false,
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Private Credit Platform", 
+                feature: "Integrate waterfall and deal creator", 
+                status: "To do", 
+                startDate: "9/30/2026", 
+                endDate: "12/31/2026",
+                dependencies: ["Deal creator integration into MM"],
+                researchRequired: false,
+                resources: ["Platform Team", "Waterfall Team"],
+                clientCommitment: false,
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Private Credit Platform", 
+                feature: "Exploration service", 
+                status: "To do", 
+                startDate: "6/30/2026", 
+                endDate: "9/30/2026",
+                dependencies: ["Data Import and Entitlements"],
+                researchRequired: true,
+                resources: ["Platform Team", "Product Team"],
+                clientCommitment: false,
+                risk: "Low",
+                contingency: "None required",
+                confluenceLink: ""
+            },
+            { 
+                workstream: "Private Credit Platform", 
+                feature: "Lender Migration", 
+                status: "To do", 
+                startDate: "1/1/2027", 
+                endDate: "3/31/2027",
+                dependencies: ["Integrate waterfall and deal creator", "Integrate compliance engine"],
+                researchRequired: false,
+                resources: ["Platform Team", "Migration Team", "QA Team"],
+                clientCommitment: true,
+                risk: "High",
+                contingency: "Phased migration with dual-run period",
+                confluenceLink: ""
+            }
+        ];
+
+        // Parse dates and calculate timeline
+        const parseDate = (dateStr) => {
+            const [month, day, year] = dateStr.split('/');
+            return new Date(year, month - 1, day);
+        };
+
+        const allDates = projectData.flatMap(item => [parseDate(item.startDate), parseDate(item.endDate)]);
+        const minDate = new Date(Math.min(...allDates));
+        const maxDate = new Date(Math.max(...allDates));
+        
+        const timelineStart = new Date(2025, 8, 1); // Sep 1, 2025
+        const timelineEnd = new Date(2027, 3, 30); // Apr 30, 2027
+        const totalDays = (timelineEnd - timelineStart) / (1000 * 60 * 60 * 24);
+
+        const calculatePosition = (date) => {
+            const days = (parseDate(date) - timelineStart) / (1000 * 60 * 60 * 24);
+            return Math.max(0, Math.min(100, (days / totalDays) * 100));
+        };
+
+        const calculateBarWidth = (startDate, endDate) => {
+            const start = parseDate(startDate);
+            const end = parseDate(endDate);
+            const days = (end - start) / (1000 * 60 * 60 * 24);
+            return Math.max(1, (days / totalDays) * 100);
+        };
+
+        const getStatusClass = (status) => {
+            if (status === "Done") return "status-done";
+            if (status === "In Progress") return "status-in-progress";
+            return "status-to-do";
+        };
+
+        const formatDate = (date) => {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${months[date.getMonth()]} ${date.getFullYear()}`;
+        };
+
+        const generateTimelineLabels = () => {
+            const labels = [];
+            const current = new Date(timelineStart);
+            
+            while (current <= timelineEnd) {
+                labels.push(new Date(current));
+                current.setMonth(current.getMonth() + 2);
+            }
+            
+            return labels.map(date => `<div class="timeline-label">${formatDate(date)}</div>`).join('');
+        };
+
+        const workstreams = [...new Set(projectData.map(item => item.workstream))];
+        const workstreamFilter = document.getElementById('workstreamFilter');
+        workstreams.forEach(ws => {
+            const option = document.createElement('option');
+            option.value = ws;
+            option.textContent = ws;
+            workstreamFilter.appendChild(option);
+        });
+
+        // Generate indicators HTML
+        const generateIndicators = (item) => {
+            let html = '';
+            if (item.dependencies && item.dependencies.length > 0) html += '<span class="indicator-badge" title="Has Dependencies">🔗</span>';
+            if (item.researchRequired) html += '<span class="indicator-badge" title="Research Required">🔬</span>';
+            if (item.resources && item.resources.length > 0) html += '<span class="indicator-badge" title="Resources Assigned">👥</span>';
+            if (item.risk === 'High' || item.risk === 'Medium') html += '<span class="indicator-badge" title="Has Risks">⚠️</span>';
+            if (item.clientCommitment) html += '<span class="indicator-badge" title="Client Commitment">📌</span>';
+            if (item.confluenceLink) html += '<span class="indicator-badge" title="Confluence Page">📄</span>';
+            return html;
+        };
+
+        // Show modal with details
+        const showModal = (item) => {
+            const modal = document.getElementById('detailModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+
+            modalTitle.textContent = item.feature;
+
+            const statusBadge = `<span class="badge badge-${item.status.toLowerCase().replace(' ', '-')}">${item.status}</span>`;
+            const riskBadge = item.risk ? `<span class="badge badge-${item.risk.toLowerCase()}">${item.risk} Risk</span>` : '';
+
+            modalBody.innerHTML = `
+                <div class="detail-section">
+                    <div class="detail-grid">
+                        <div class="detail-label">Workstream:</div>
+                        <div class="detail-value"><strong>${item.workstream}</strong></div>
+                        
+                        <div class="detail-label">Status:</div>
+                        <div class="detail-value">${statusBadge}</div>
+                        
+                        <div class="detail-label">Timeline:</div>
+                        <div class="detail-value">${item.startDate} → ${item.endDate}</div>
+                        
+                        <div class="detail-label">Risk Level:</div>
+                        <div class="detail-value">${riskBadge}</div>
+                    </div>
+                </div>
+
+                ${item.dependencies && item.dependencies.length > 0 ? `
+                <div class="detail-section">
+                    <h3>📋 Dependencies</h3>
+                    <ul class="dependency-list">
+                        ${item.dependencies.map(dep => `<li class="dependency-item">${dep}</li>`).join('')}
+                    </ul>
+                </div>
+                ` : ''}
+
+                ${item.researchRequired ? `
+                <div class="detail-section">
+                    <h3>🔬 Research Required</h3>
+                    <p>This feature requires additional product research before implementation.</p>
+                    ${item.researchStartDate && item.researchEndDate ? `
+                    <p style="margin-top: 8px;"><strong>Research Timeline:</strong> ${item.researchStartDate} → ${item.researchEndDate}</p>
+                    ` : ''}
+                </div>
+                ` : ''}
+
+                ${item.resources && item.resources.length > 0 ? `
+                <div class="detail-section">
+                    <h3>👥 Resources Allocated</h3>
+                    <div class="resource-list">
+                        ${item.resources.map(res => `<span class="resource-chip">${res}</span>`).join('')}
+                    </div>
+                </div>
+                ` : ''}
+
+                ${item.clientCommitment && item.clientCommitment !== "None" && item.clientCommitment !== false ? `
+                <div class="detail-section">
+                    <h3>📌 Client Commitment</h3>
+                    <p><strong>This is a client-committed deliverable with a firm deadline.</strong></p>
+                    ${typeof item.clientCommitment === 'string' && item.clientCommitment !== 'None' && item.clientCommitment !== 'false' ? `
+                    <p style="margin-top: 8px;"><strong>Client(s):</strong> ${item.clientCommitment}</p>
+                    ` : ''}
+                </div>
+                ` : ''}
+
+                ${item.risk && item.risk !== 'Low' ? `
+                <div class="detail-section">
+                    <h3>⚠️ Risks & Contingencies</h3>
+                    <div class="risk-box ${item.risk.toLowerCase()}">
+                        <strong>Risk Level: ${item.risk}</strong>
+                        ${item.contingency ? `<p style="margin-top: 8px;"><strong>Contingency Plan:</strong> ${item.contingency}</p>` : ''}
+                    </div>
+                </div>
+                ` : ''}
+
+                ${item.confluenceLink ? `
+                <div class="detail-section">
+                    <h3>📄 Documentation</h3>
+                    <a href="${item.confluenceLink}" target="_blank" class="confluence-link">
+                        View Confluence Page →
+                    </a>
+                </div>
+                ` : ''}
+            `;
+
+            modal.style.display = 'block';
+        };
+
+        // Render Gantt chart
+        const renderGantt = () => {
+            const workstreamFilterValue = document.getElementById('workstreamFilter').value;
+            const statusFilterValue = document.getElementById('statusFilter').value;
+            const riskFilterValue = document.getElementById('riskFilter').value;
+
+            let filteredData = projectData;
+            
+            if (workstreamFilterValue !== 'all') {
+                filteredData = filteredData.filter(item => item.workstream === workstreamFilterValue);
+            }
+            
+            if (statusFilterValue !== 'all') {
+                filteredData = filteredData.filter(item => item.status === statusFilterValue);
+            }
+
+            if (riskFilterValue !== 'all') {
+                filteredData = filteredData.filter(item => item.risk === riskFilterValue);
+            }
+
+            filteredData.sort((a, b) => parseDate(a.startDate) - parseDate(b.startDate));
+
+            const ganttChart = document.getElementById('ganttChart');
+            ganttChart.innerHTML = `
+                <div class="gantt-header">
+                    <div>Workstream</div>
+                    <div>Feature</div>
+                    <div>Indicators</div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between;">
+                            ${generateTimelineLabels()}
+                        </div>
+                    </div>
+                </div>
+                ${filteredData.map((item, index) => {
+                    const position = calculatePosition(item.startDate);
+                    const barWidth = calculateBarWidth(item.startDate, item.endDate);
+                    const formatDateShort = (dateStr) => {
+                        const date = parseDate(dateStr);
+                        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        return `${months[date.getMonth()]} ${date.getDate()}`;
+                    };
+                    
+                    const hasDependencies = item.dependencies && item.dependencies.length > 0;
+                    const hasRisk = item.risk === 'High' || item.risk === 'Medium';
+                    
+                    // Calculate research bar if it exists
+                    let researchBarHTML = '';
+                    if (item.researchStartDate && item.researchEndDate) {
+                        const researchPosition = calculatePosition(item.researchStartDate);
+                        const researchWidth = calculateBarWidth(item.researchStartDate, item.researchEndDate);
+                        researchBarHTML = `
+                            <div class="timeline-bar research-bar" 
+                                 style="left: ${researchPosition}%; width: ${researchWidth}%;"
+                                 onclick="showFeatureDetails(${index})"
+                                 title="Research Phase: ${item.researchStartDate} to ${item.researchEndDate}">
+                                <span style="white-space: nowrap; font-size: 9px; overflow: hidden; text-overflow: ellipsis;">🔬 Research</span>
+                            </div>
+                        `;
+                    }
+                    
+                    return `
+                        <div class="gantt-row">
+                            <div class="workstream-cell">${item.workstream}</div>
+                            <div class="feature-cell">${item.feature}</div>
+                            <div class="indicators-cell">
+                                ${generateIndicators(item)}
+                            </div>
+                            <div class="timeline-cell">
+                                ${researchBarHTML}
+                                <div class="timeline-bar implementation-bar ${getStatusClass(item.status)} ${hasDependencies ? 'has-dependency' : ''} ${hasRisk ? 'has-risk' : ''}" 
+                                     style="left: ${position}%; width: ${barWidth}%;"
+                                     onclick="showFeatureDetails(${index})"
+                                     title="Click for details: ${item.feature}">
+                                    <span style="white-space: nowrap; font-size: 10px; overflow: hidden; text-overflow: ellipsis;">${formatDateShort(item.startDate)} - ${formatDateShort(item.endDate)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            `;
+        };
+
+        // Global function to show feature details
+        window.showFeatureDetails = (index) => {
+            const workstreamFilterValue = document.getElementById('workstreamFilter').value;
+            const statusFilterValue = document.getElementById('statusFilter').value;
+            const riskFilterValue = document.getElementById('riskFilter').value;
+
+            let filteredData = projectData;
+            
+            if (workstreamFilterValue !== 'all') {
+                filteredData = filteredData.filter(item => item.workstream === workstreamFilterValue);
+            }
+            
+            if (statusFilterValue !== 'all') {
+                filteredData = filteredData.filter(item => item.status === statusFilterValue);
+            }
+
+            if (riskFilterValue !== 'all') {
+                filteredData = filteredData.filter(item => item.risk === riskFilterValue);
+            }
+
+            filteredData.sort((a, b) => parseDate(a.startDate) - parseDate(b.startDate));
+            
+            showModal(filteredData[index]);
+        };
+
+        // Calculate statistics
+        const renderStats = () => {
+            const total = projectData.length;
+            const done = projectData.filter(item => item.status === "Done").length;
+            const inProgress = projectData.filter(item => item.status === "In Progress").length;
+            const toDo = projectData.filter(item => item.status === "To do").length;
+            const workstreamCount = [...new Set(projectData.map(item => item.workstream))].length;
+            const highRisk = projectData.filter(item => item.risk === "High").length;
+            const clientCommitments = projectData.filter(item => item.clientCommitment).length;
+            const researchRequired = projectData.filter(item => item.researchRequired).length;
+
+            const statsContainer = document.getElementById('stats');
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${total}</div>
+                    <div class="stat-label">Total Features</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #4CAF50;">${done}</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #FF9800;">${inProgress}</div>
+                    <div class="stat-label">In Progress</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #2196F3;">${toDo}</div>
+                    <div class="stat-label">To Do</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${workstreamCount}</div>
+                    <div class="stat-label">Workstreams</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${Math.round((done / total) * 100)}%</div>
+                    <div class="stat-label">Completion Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #FF4444;">${highRisk}</div>
+                    <div class="stat-label">High Risk Items</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #FF9800;">${clientCommitments}</div>
+                    <div class="stat-label">Client Commitments</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #667eea;">${researchRequired}</div>
+                    <div class="stat-label">Research Required</div>
+                </div>
+            `;
+        };
+
+        // Modal close functionality
+        const modal = document.getElementById('detailModal');
+        const closeBtn = document.getElementsByClassName('close')[0];
+
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Event listeners
+        document.getElementById('workstreamFilter').addEventListener('change', renderGantt);
+        document.getElementById('statusFilter').addEventListener('change', renderGantt);
+        document.getElementById('riskFilter').addEventListener('change', renderGantt);
+
+        // Initial render
+        renderGantt();
+        renderStats();
+    </script>
+</body>
+</html>
