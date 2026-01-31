@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Gantt Chart - Workstream Timeline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 100%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            padding: 20px 30px;
+            background: #f9f9f9;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .control-group select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-left: auto;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .gantt-container {
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        .gantt-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 1200px;
+        }
+
+        .gantt-header {
+            display: grid;
+            grid-template-columns: 200px 300px 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .gantt-row {
+            display: grid;
+            grid-template-columns: 200px 300px 1fr;
+            gap: 10px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .gantt-row:hover {
+            background: #f9f9f9;
+        }
+
+        .workstream-cell {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        .feature-cell {
+            color: #333;
+            font-size: 14px;
+        }
+
+        .timeline-cell {
+            position: relative;
+            height: 30px;
+        }
+
+        .timeline-bar {
+            position: absolute;
+            height: 100%;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .timeline-bar:hover {
+            transform: scaleY(1.2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .status-done {
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+        }
+
+        .status-in-progress {
+            background: linear-gradient(90deg, #FF9800, #F57C00);
+        }
+
+        .status-to-do {
+            background: linear-gradient(90deg, #2196F3, #1976D2);
+        }
+
+        .timeline-labels {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #666;
+            grid-column: 3;
+        }
+
+        .timeline-label {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f9f9f9;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .gantt-header,
+            .gantt-row {
+                grid-template-columns: 150px 200px 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Project Timeline Gantt Chart</h1>
+            <p>Workstream Features & Delivery Schedule (Sep 2025 - Mar 2027)</p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="workstreamFilter">Filter by Workstream:</label>
+                <select id="workstreamFilter">
+                    <option value="all">All Workstreams</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="statusFilter">Filter by Status:</label>
+                <select id="statusFilter">
+                    <option value="all">All Statuses</option>
+                    <option value="Done">Done</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="To do">To do</option>
+                </select>
+            </div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color status-done"></div>
+                    <span>Done</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color status-in-progress"></div>
+                    <span>In Progress</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color status-to-do"></div>
+                    <span>To do</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="gantt-container">
+            <div class="gantt-chart" id="ganttChart"></div>
+        </div>
+
+        <div class="stats" id="stats"></div>
+    </div>
+
+    <script>
+        const projectData = [
+            { workstream: "Data Import", feature: "Data and Document Hub", status: "Done", startDate: "9/30/2025", endDate: "11/30/2025" },
+            { workstream: "Data Import", feature: "Data folders", status: "Done", startDate: "9/30/2025", endDate: "11/30/2025" },
+            { workstream: "Data Import", feature: "Data Pipelines", status: "Done", startDate: "9/30/2025", endDate: "12/15/2025" },
+            { workstream: "Data Import", feature: "Data Extraction", status: "In Progress", startDate: "12/15/2025", endDate: "1/31/2026" },
+            { workstream: "Data Import", feature: "Transformation", status: "In Progress", startDate: "1/15/2026", endDate: "2/28/2026" },
+            { workstream: "Data Import", feature: "Schema Mapping", status: "To do", startDate: "1/31/2026", endDate: "3/31/2026" },
+            { workstream: "Data Import", feature: "Validation", status: "Done", startDate: "9/30/2025", endDate: "12/15/2025" },
+            { workstream: "Data Import", feature: "Modular UI", status: "In Progress", startDate: "1/1/2026", endDate: "3/31/2026" },
+            { workstream: "Data Import", feature: "Custom Recipes for MM", status: "In Progress", startDate: "1/10/2026", endDate: "3/31/2026" },
+            { workstream: "Data Import", feature: "MM Integration", status: "To do", startDate: "3/31/2026", endDate: "6/30/2026" },
+            { workstream: "Data Import", feature: "Unstructured Data extraction", status: "To do", startDate: "4/30/2026", endDate: "6/30/2026" },
+            { workstream: "Data Import", feature: "Prompt management", status: "To do", startDate: "5/30/2026", endDate: "6/30/2026" },
+            { workstream: "Data Import", feature: "Private Creditplatform integration", status: "To do", startDate: "6/30/2026", endDate: "9/30/2026" },
+            { workstream: "Access and Entitlements", feature: "Use in Data Import", status: "To do", startDate: "1/15/2026", endDate: "3/31/2026" },
+            { workstream: "Access and Entitlements", feature: "Integration into MM for trustee use case", status: "To do", startDate: "3/31/2026", endDate: "6/30/2026" },
+            { workstream: "Access and Entitlements", feature: "Integration into Private Credit Platform", status: "To do", startDate: "6/30/2026", endDate: "9/30/2026" },
+            { workstream: "Manager Module", feature: "MM 2.0 Rollout", status: "In Progress", startDate: "11/15/2025", endDate: "1/31/2026" },
+            { workstream: "Manager Module", feature: "Tech debt removal from compliance", status: "In Progress", startDate: "12/1/2025", endDate: "2/28/2026" },
+            { workstream: "Manager Module", feature: "Tech Debt Mongo update, Compliance engine refactor", status: "To do", startDate: "2/1/2026", endDate: "3/31/2026" },
+            { workstream: "Manager Module", feature: "Tech debt ES removal from daily load", status: "To do", startDate: "2/1/2026", endDate: "3/31/2026" },
+            { workstream: "Manager Module", feature: "API 2.0 Rollout", status: "To do", startDate: "4/30/2026", endDate: "5/30/2026" },
+            { workstream: "Manager Module", feature: "Deal override enhancements", status: "To do", startDate: "2/15/2026", endDate: "3/31/2026" },
+            { workstream: "Manager Module", feature: "WSO API Integration", status: "To do", startDate: "4/30/2026", endDate: "6/30/2026" },
+            { workstream: "Manager Module", feature: "LevPro Integration", status: "Done", startDate: "9/30/2025", endDate: "12/31/2025" },
+            { workstream: "Manager Module", feature: "Compliance Library", status: "To do", startDate: "6/30/2026", endDate: "9/30/2026" },
+            { workstream: "Manager Module", feature: "Waterfall model integration into MM", status: "To do", startDate: "1/31/2026", endDate: "5/31/2026" },
+            { workstream: "Manager Module", feature: "View Management", status: "To do", startDate: "6/30/2026", endDate: "9/30/2026" },
+            { workstream: "Manager Module", feature: "Dashboard Integration for apollo", status: "To do", startDate: "3/31/2026", endDate: "5/30/2026" },
+            { workstream: "Manager Module", feature: "Optimizer UI", status: "To do", startDate: "6/30/2026", endDate: "12/31/2026" },
+            { workstream: "Waterfall", feature: "Watefall input JSON from MM", status: "To do", startDate: "1/31/2026", endDate: "3/31/2026" },
+            { workstream: "Waterfall", feature: "Waterfall model output to MM", status: "To do", startDate: "3/1/2026", endDate: "5/31/2026" },
+            { workstream: "Waterfall", feature: "Waterfall Library", status: "To do", startDate: "5/31/2026", endDate: "7/31/2026" },
+            { workstream: "Waterfall", feature: "Deal creator integration into MM", status: "To do", startDate: "6/30/2026", endDate: "9/30/2026" },
+            { workstream: "Recon", feature: "Recon to use the data from common data layer", status: "To do", startDate: "6/30/2026", endDate: "9/30/2026" },
+            { workstream: "Recon", feature: "Recon app switching with MM", status: "To do", startDate: "2/1/2026", endDate: "6/30/2026" },
+            { workstream: "Dashboarding", feature: "Apollo dashbords", status: "To do", startDate: "2/1/2026", endDate: "3/31/2026" },
+            { workstream: "Dashboarding", feature: "More generic dashboards", status: "To do", startDate: "3/31/2026", endDate: "6/30/2026" },
+            { workstream: "Dashboarding", feature: "Integration into MM", status: "To do", startDate: "3/31/2026", endDate: "6/30/2026" },
+            { workstream: "Dashboarding", feature: "Integration into new Private credit platform", status: "To do", startDate: "3/31/2026", endDate: "6/30/2026" },
+            { workstream: "Dashboarding", feature: "Sisense replacement capabilities", status: "To do", startDate: "9/30/2026", endDate: "12/31/2026" },
+            { workstream: "Private Credit Platform", feature: "Data Import and Entitlements", status: "To do", startDate: "3/31/2026", endDate: "6/30/2026" },
+            { workstream: "Private Credit Platform", feature: "Integrate compliance engine", status: "To do", startDate: "3/31/2026", endDate: "6/30/2026" },
+            { workstream: "Private Credit Platform", feature: "Integrate Dashboards", status: "To do", startDate: "6/30/2026", endDate: "9/30/2026" },
+            { workstream: "Private Credit Platform", feature: "Integrate waterfall and deal creator", status: "To do", startDate: "9/30/2026", endDate: "12/31/2026" },
+            { workstream: "Private Credit Platform", feature: "Exploration service", status: "To do", startDate: "6/30/2026", endDate: "9/30/2026" },
+            { workstream: "Private Credit Platform", feature: "Lender Migration", status: "To do", startDate: "1/1/2027", endDate: "3/31/2027" }
+        ];
+
+        // Parse dates and calculate timeline
+        const parseDate = (dateStr) => {
+            const [month, day, year] = dateStr.split('/');
+            return new Date(year, month - 1, day);
+        };
+
+        const allDates = projectData.flatMap(item => [parseDate(item.startDate), parseDate(item.endDate)]);
+        const minDate = new Date(Math.min(...allDates));
+        const maxDate = new Date(Math.max(...allDates));
+        
+        // Set timeline from earliest start to latest end date
+        const timelineStart = new Date(2025, 8, 1); // Sep 1, 2025
+        const timelineEnd = new Date(2027, 3, 30); // Apr 30, 2027
+        const totalDays = (timelineEnd - timelineStart) / (1000 * 60 * 60 * 24);
+
+        const calculatePosition = (date) => {
+            const days = (parseDate(date) - timelineStart) / (1000 * 60 * 60 * 24);
+            return Math.max(0, Math.min(100, (days / totalDays) * 100));
+        };
+
+        const calculateBarWidth = (startDate, endDate) => {
+            const start = parseDate(startDate);
+            const end = parseDate(endDate);
+            const days = (end - start) / (1000 * 60 * 60 * 24);
+            return Math.max(1, (days / totalDays) * 100);
+        };
+
+        const getStatusClass = (status) => {
+            if (status === "Done") return "status-done";
+            if (status === "In Progress") return "status-in-progress";
+            return "status-to-do";
+        };
+
+        const formatDate = (date) => {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${months[date.getMonth()]} ${date.getFullYear()}`;
+        };
+
+        // Generate timeline labels
+        const generateTimelineLabels = () => {
+            const labels = [];
+            const current = new Date(timelineStart);
+            
+            while (current <= timelineEnd) {
+                labels.push(new Date(current));
+                current.setMonth(current.getMonth() + 2); // Every 2 months
+            }
+            
+            return labels.map(date => `<div class="timeline-label">${formatDate(date)}</div>`).join('');
+        };
+
+        // Populate workstream filter
+        const workstreams = [...new Set(projectData.map(item => item.workstream))];
+        const workstreamFilter = document.getElementById('workstreamFilter');
+        workstreams.forEach(ws => {
+            const option = document.createElement('option');
+            option.value = ws;
+            option.textContent = ws;
+            workstreamFilter.appendChild(option);
+        });
+
+        // Render Gantt chart
+        const renderGantt = () => {
+            const workstreamFilterValue = document.getElementById('workstreamFilter').value;
+            const statusFilterValue = document.getElementById('statusFilter').value;
+
+            let filteredData = projectData;
+            
+            if (workstreamFilterValue !== 'all') {
+                filteredData = filteredData.filter(item => item.workstream === workstreamFilterValue);
+            }
+            
+            if (statusFilterValue !== 'all') {
+                filteredData = filteredData.filter(item => item.status === statusFilterValue);
+            }
+
+            // Sort by start date
+            filteredData.sort((a, b) => parseDate(a.startDate) - parseDate(b.startDate));
+
+            const ganttChart = document.getElementById('ganttChart');
+            ganttChart.innerHTML = `
+                <div class="gantt-header">
+                    <div>Workstream</div>
+                    <div>Feature</div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between;">
+                            ${generateTimelineLabels()}
+                        </div>
+                    </div>
+                </div>
+                ${filteredData.map(item => {
+                    const position = calculatePosition(item.startDate);
+                    const barWidth = calculateBarWidth(item.startDate, item.endDate);
+                    const formatDateShort = (dateStr) => {
+                        const date = parseDate(dateStr);
+                        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        return `${months[date.getMonth()]} ${date.getDate()}`;
+                    };
+                    
+                    return `
+                        <div class="gantt-row">
+                            <div class="workstream-cell">${item.workstream}</div>
+                            <div class="feature-cell">${item.feature}</div>
+                            <div class="timeline-cell">
+                                <div class="timeline-bar ${getStatusClass(item.status)}" 
+                                     style="left: ${position}%; width: ${barWidth}%;"
+                                     title="${item.feature} - ${item.status} - ${item.startDate} to ${item.endDate}">
+                                    <span style="white-space: nowrap; font-size: 10px; overflow: hidden; text-overflow: ellipsis;">${formatDateShort(item.startDate)} - ${formatDateShort(item.endDate)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            `;
+        };
+
+        // Calculate statistics
+        const renderStats = () => {
+            const total = projectData.length;
+            const done = projectData.filter(item => item.status === "Done").length;
+            const inProgress = projectData.filter(item => item.status === "In Progress").length;
+            const toDo = projectData.filter(item => item.status === "To do").length;
+            const workstreamCount = [...new Set(projectData.map(item => item.workstream))].length;
+
+            const statsContainer = document.getElementById('stats');
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${total}</div>
+                    <div class="stat-label">Total Features</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #4CAF50;">${done}</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #FF9800;">${inProgress}</div>
+                    <div class="stat-label">In Progress</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #2196F3;">${toDo}</div>
+                    <div class="stat-label">To Do</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${workstreamCount}</div>
+                    <div class="stat-label">Workstreams</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${Math.round((done / total) * 100)}%</div>
+                    <div class="stat-label">Completion Rate</div>
+                </div>
+            `;
+        };
+
+        // Event listeners
+        document.getElementById('workstreamFilter').addEventListener('change', renderGantt);
+        document.getElementById('statusFilter').addEventListener('change', renderGantt);
+
+        // Initial render
+        renderGantt();
+        renderStats();
+    </script>
+</body>
+</html>

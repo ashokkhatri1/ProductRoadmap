@@ -1,0 +1,49 @@
+Workstream,Feature,Status,Start Date,End Date,Dependencies,Research Required,Research Start Date,Research End Date,Resources,Client Commitment,Risk,Contingency,Confluence Link
+Data Import,Data and Document Hub,Done,9/30/2025,11/30/2025,,No,,,Data Import Team,State Street,Low,None required,https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap
+Data Import,Data folders,Done,9/30/2025,11/30/2025,,No,,,Data Import Team,State Street,Low,None required,https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap
+Data Import,Data Pipelines,Done,9/30/2025,12/15/2025,,No,,,Data Import Team,State Street,Low,None required,https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap
+Data Import,Data Extraction,In Progress,12/15/2025,1/31/2026,Data Pipelines,Yes,,,Data Import Team,State Street,Low,None required,https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap
+Data Import,MM specific Transformation,In Progress,1/15/2026,2/28/2026,Data Extraction,No,,,Data Import Team,State Street,Low,None required,https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap
+Data Import,Schema Mapping,To do,2/15/2026,3/31/2026,Data Extraction,Yes,1/15/2026,2/15/2026,Data Import Team,State Street,Low,None required,https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap
+Data Import,Validation,Done,9/30/2025,12/15/2025,,No,,,Data Import Team,No,Low,None required,
+Data Import,Generic Transformation,To do,4/1/2026,5/30/2026,"Data Extraction, Schema mapping",No,,,Data Import Team,None,Low,None required,https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap
+Data Import,Modular UI,In Progress,1/1/2026,3/31/2026,,No,,,Frontend Team,No,Low,None required,https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1445638236/Micro-Frontend+Architecture+Executive+Summary
+Manager Module,Custom MM DI,To do,3/31/2026,4/30/2026,None,Yes,1/21/2026,2/15/2026,"Data Import Team, MM Team",State Street,Medium,Use existing  MM DI,
+Data Import,MM Integration,To do,3/31/2026,5/30/2026,"Modular UI, Schema Mapping",Yes,2/15/2026,3/15/2026,"Data Import Team, MM Team",State Street,Medium,Use existing MM DI,
+Data Import,Unstructured Data extraction,To do,5/30/2026,7/30/2026,Data Extraction,Yes,,,Data Import Team,No,Medium,,
+Data Import,Prompt management,To do,5/30/2026,7/30/2026,Unstructured Data extraction,Yes,,,Data Import Team,No,Medium,None required,
+Data Import,Private Credit platform integration,To do,6/30/2026,9/30/2026,"Modular UI, Entitlements, Data Import",No,,,"Data Import Team, Platform Team",No,Medium,None required,https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1431113401/Data+Import+Service+Roadmap
+Access and Entitlements,Use in Data Import,To do,1/15/2026,3/31/2026,,Yes,,,"Platform Team, Data Import Team",Yes,High,Use Keycloak for authentication,https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/904265907/Entitlements+in+as+a+service
+Access and Entitlements,Integration into MM for trustee use case,To do,3/31/2026,6/30/2026,Use in Data Import,No,,,"Platform Team, MM Team",Yes,Medium,Use Keycloak for authentication,https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/904265907/Entitlements+in+as+a+service
+Access and Entitlements,Integration into Private Credit Platform,To do,6/30/2026,9/30/2026,Integration into MM for trustee use case,No,,,"Platform Team, Data Import Team",No,Low,None required,https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/904265907/Entitlements+in+as+a+service
+Manager Module,MM 2.0 Rollout,In Progress,11/15/2025,1/31/2026,,No,,,"MM Team, QA Team, Product Manager",Yes,Medium,None required,https://moodysanalytics.atlassian.net/wiki/spaces/SAV/pages/1202136535/2.0.0+Release+dates+by+client
+Manager Module,ES removal from compliance,In Progress,12/1/2025,2/28/2026,,No,,,MM Team,PGIM,Medium,Keep ES as fallback temporarily,None
+Manager Module,Tech Debt Mongo update Compliance engine refactor,To do,2/1/2026,3/31/2026,None,No,,,MM Team,No,Medium,Incremental updates,https://moodysanalytics.atlassian.net/wiki/spaces/SAV/pages/1223819670/Manager+Module+-+Tech+Debt
+Manager Module,Tech debt ES removal from daily load,To do,2/1/2026,3/31/2026,"ES removal from compliance, custom MM DI, Data Import MM Integration",No,,,"MM Team, Data Import Team",PGIM,High,Maintain ES process,https://moodysanalytics.atlassian.net/wiki/spaces/SAV/pages/1549633085/Manager+Module+Data+Import+version+2+-+Draft+Design
+Manager Module,API 2.0 Rollout,To do,4/30/2026,5/30/2026,MM 2.0 Rollout,Yes,,,MM Team,No,High,Maintain API 1.0 compatibility,https://moodysanalytics.atlassian.net/wiki/spaces/SAV/pages/1202101126/MM+2.0+APIs
+Manager Module,Deal override enhancements,To do,2/15/2026,3/31/2026,,No,,,MM Team,"State Street, Monroe",Medium,Keep existing override logic,https://moodysanalytics.atlassian.net/wiki/spaces/SAV/pages/1154417336/Data+overrride+management+with+files+and+UI
+Manager Module,WSO API Integration,To do,4/30/2026,6/30/2026,None,Yes,,,MM Team,Cross Ocean,Medium,Manual data import from WSO,
+Manager Module,LevPro Integration,Done,9/30/2025,12/31/2025,,No,,,MM Team,AGL,Low,None required,https://moodysanalytics.atlassian.net/wiki/spaces/GRIF/pages/1101632718/MM+Hypo+trade+-+LevPro+Integration
+Manager Module,Compliance Library,To do,6/30/2026,9/30/2026,Tech Debt Mongo update/Compliance engine refactor,Yes,,,MM Team,State street,Medium,Use existing compliance rules,
+Manager Module,Waterfall model integration into MM,To do,1/31/2026,5/31/2026,Waterfall model output to MM,No,,,"MM Team, Waterfall Team",State street,High,External waterfall calculations,https://moodysanalytics.atlassian.net/wiki/spaces/ISH/pages/1140002204/Manager+Module+-+Waterfall+Integration+project
+Manager Module,View Management,To do,6/30/2026,9/30/2026,MM 2.0 Rollout,No,,,"MM Team, Frontend Team",No,Low,Fixed view configurations,
+Manager Module,Dashboard Integration for apollo,To do,3/31/2026,5/30/2026,Apollo dashbords,No,,,"MM Team, Dashboarding Team",Apollo/Redding Ridge,High,Standalone dashboards,
+Manager Module,Enhancements to Hypo trading,To do,6/30/2026,9/30/2026,,Yes,,,MM Team,No,Low,None required,
+Manager Module,Optimizer UI,To do,9/30/2026,12/31/2026,,Yes,,,"Frontend Team, Optimizer Team, UX Designers",Yes,Low,API Interface for optimizer,
+Waterfall,Watefall input JSON from MM,To do,1/31/2026,3/31/2026,MM 2.0 Rollout,No,,,"Waterfall Team, MM Team",State street,Medium,None required,https://moodysanalytics.atlassian.net/wiki/spaces/ISH/pages/1140002204/Manager+Module+-+Waterfall+Integration+project
+Waterfall,Waterfall model output to MM,To do,3/1/2026,5/31/2026,Watefall input JSON from MM,No,,,"Waterfall Team, MM Team",State street,Medium,None required,https://moodysanalytics.atlassian.net/wiki/spaces/ISH/pages/1140002204/Manager+Module+-+Waterfall+Integration+project
+Waterfall,Waterfall Library,To do,5/31/2026,7/31/2026,Waterfall model output to MM,Yes,,,"Waterfall Team, Backend Engineers",No,Medium,TBD,https://moodysanalytics.atlassian.net/wiki/spaces/ISH/pages/1140002204/Manager+Module+-+Waterfall+Integration+project
+Waterfall,Deal creator integration into MM,To do,6/30/2026,9/30/2026,"Waterfall Library, Waterfall model integration into MM",No,,,"Waterfall Team, MM Team, Frontend Team",State street,Medium,Scripting for deal creation,https://moodysanalytics.atlassian.net/wiki/spaces/ISH/pages/1140002204/Manager+Module+-+Waterfall+Integration+project
+Recon,Recon to use the data from common data layer,To do,6/30/2026,9/30/2026,MM Integration,No,,,"Data Import Team, Private Credit Platform Team",No,Medium,Direct database access,
+Recon,Recon app switching with MM,To do,6/1/2026,6/30/2026,MM 2.0 Rollout,No,,,"Recon Team, MM Team",No,Low,None required,
+Dashboarding,Apollo dashbords,To do,2/1/2026,3/31/2026,,No,,,"Dashboarding Team, MM Team",Apollo/Redding Ridge,High,None required,
+Dashboarding,More generic dashboards,To do,3/31/2026,6/30/2026,Apollo dashbords,Yes,,,"Dashboarding Team, Product Team",No,Low,Template-based dashboards,
+Dashboarding,Integration into MM,To do,3/31/2026,6/30/2026,"Apollo dashbords, MM 2.0 Rollout",No,,,"Dashboarding Team, MM Team",No,Medium,TBD,
+Dashboarding,Integration into new Private credit platform,To do,3/31/2026,6/30/2026,More generic dashboards,No,,,"Dashboarding Team, Private Credit Platform Team",Yes,Low,Separate dashboard instance,
+Dashboarding,Sisense replacement capabilities,To do,9/30/2026,12/31/2026,More generic dashboards,Yes,,,Dashboarding Team,No,Medium,Keep Sisense running in parallel,
+Private Credit Platform,Data Import and Entitlements,To do,3/31/2026,6/30/2026,Use in Data Import,No,,,"Platform Team, Data Import Team",No,Medium,Manual data import process,
+Private Credit Platform,Integrate compliance engine,To do,3/31/2026,6/30/2026,"Compliance Library, Data Import and Entitlements",No,,,"Platform Team, Compliance Team",Yes,Low,None required,
+Private Credit Platform,Integrate Dashboards,To do,6/30/2026,9/30/2026,Integration into new Private credit platform,No,,,"Platform Team, Dashboarding Team",No,Low,None required,
+Private Credit Platform,Integrate waterfall and deal creator,To do,9/30/2026,12/31/2026,Deal creator integration into MM,No,,,"Platform Team, Waterfall Team",No,Low,None required,
+Private Credit Platform,Exploration service,To do,6/30/2026,9/30/2026,Data Import and Entitlements,Yes,,,"Platform Team, Product Team",No,Low,None required,
+Private Credit Platform,Lender Migration,To do,1/1/2027,3/31/2027,"Integrate waterfall and deal creator, Integrate compliance engine",No,,,"Platform Team, Migration Team, QA Team",Yes,High,Phased migration with dual-run period,
