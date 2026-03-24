@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Roadmap Timeline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #ffffff;
+            padding: 20px;
+        }
+        
+        .timeline-container {
+            border: 1px solid #dfe1e6;
+            border-radius: 3px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .timeline-header {
+            display: flex;
+            background: #f4f5f7;
+            border-bottom: 2px solid #dfe1e6;
+        }
+        
+        .header-label {
+            width: 150px;
+            padding: 12px;
+            font-weight: 600;
+            font-size: 12px;
+            color: #42526e;
+            border-right: 1px solid #dfe1e6;
+            flex-shrink: 0;
+        }
+        
+        .header-months {
+            display: flex;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .month-col {
+            flex: 1;
+            min-width: 80px;
+            padding: 12px 4px;
+            text-align: center;
+            border-left: 1px solid #e8e8e8;
+            font-size: 11px;
+            font-weight: 600;
+            color: #5e6c84;
+        }
+        
+        .timeline-body {
+            display: flex;
+        }
+        
+        .timeline-labels {
+            width: 150px;
+            border-right: 1px solid #dfe1e6;
+            flex-shrink: 0;
+            background: #fafbfc;
+        }
+        
+        .timeline-label {
+            padding: 12px;
+            height: 50px;
+            border-bottom: 1px solid #ebecf0;
+            font-size: 13px;
+            color: #172b4d;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        
+        .timeline-chart {
+            flex: 1;
+            position: relative;
+            min-width: 0;
+        }
+        
+        .timeline-grid {
+            display: flex;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        
+        .grid-col {
+            flex: 1;
+            min-width: 80px;
+            border-left: 1px solid #ebecf0;
+        }
+        
+        .timeline-rows {
+            position: relative;
+        }
+        
+        .timeline-row {
+            height: 50px;
+            border-bottom: 1px solid #ebecf0;
+            position: relative;
+        }
+        
+        .release-bar {
+            position: absolute;
+            height: 28px;
+            top: 11px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 500;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+        }
+        
+        .release-bar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+            filter: brightness(1.1);
+        }
+        
+        .release-bar.clo {
+            background: #4A90E2;
+        }
+        
+        .release-bar.dis {
+            background: #7B68EE;
+        }
+        
+        .release-bar.released {
+            opacity: 0.6;
+        }
+        
+        .today-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #ff5630;
+            z-index: 10;
+        }
+        
+        .today-line::before {
+            content: 'Today';
+            position: absolute;
+            top: -25px;
+            left: -18px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #ff5630;
+            background: white;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: #172b4d;
+            color: white;
+            padding: 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .tooltip.show {
+            opacity: 1;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin: 15px 0;
+            padding: 12px;
+            background: #f4f5f7;
+            border-radius: 3px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #42526e;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background: #4A90E2;"></div><span>CLO</span></div>
+        <div class="legend-item"><div class="legend-color" style="background: #7B68EE;"></div><span>DIS</span></div>
+    </div>
+    
+    <div class="timeline-container">
+        <div class="timeline-header">
+            <div class="header-label">Releases</div>
+            <div class="header-months">
+                <div class="month-col">Mar 2026</div>
+                <div class="month-col">Apr 2026</div>
+                <div class="month-col">May 2026</div>
+                <div class="month-col">Jun 2026</div>
+                <div class="month-col">Jul 2026</div>
+                <div class="month-col">Aug 2026</div>
+                <div class="month-col">Sep 2026</div>
+                <div class="month-col">Oct 2026</div>
+                <div class="month-col">Nov 2026</div>
+                <div class="month-col">Dec 2026</div>
+            </div>
+        </div>
+        
+        <div class="timeline-body">
+            <div class="timeline-labels">
+                <div class="timeline-label">CLO: 2.2.0</div>
+                <div class="timeline-label">CLO: 2.6.0</div>
+                <div class="timeline-label">CLO: 2.8.0</div>
+                <div class="timeline-label">CLO: 2.10.0</div>
+                <div class="timeline-label">DIS: 1.0</div>
+                <div class="timeline-label">DIS: 1.1</div>
+                <div class="timeline-label">DIS: 1.2</div>
+                <div class="timeline-label">DIS: 1.3</div>
+            </div>
+            
+            <div class="timeline-chart">
+                <div class="timeline-grid">
+                    <div class="grid-col"></div>
+                    <div class="grid-col"></div>
+                    <div class="grid-col"></div>
+                    <div class="grid-col"></div>
+                    <div class="grid-col"></div>
+                    <div class="grid-col"></div>
+                    <div class="grid-col"></div>
+                    <div class="grid-col"></div>
+                    <div class="grid-col"></div>
+                    <div class="grid-col"></div>
+                </div>
+                
+                <div class="timeline-rows">
+                    <div class="today-line" style="left: 7.516339869281046%;"></div>
+                    <div class="timeline-row">
+                        <div class="release-bar clo planned" style="left: 7.8431372549019605%; width: 9.803921568627452%;" title="CLO: 2.2.0\nStart: Mar 25, 2026\nRelease: Apr 24, 2026\nES removal from compliance
+Deal Override enhancements\n">2.2.0</div>
+                    </div>
+                    <div class="timeline-row">
+                        <div class="release-bar clo planned" style="left: 30.065359477124183%; width: 19.607843137254903%;" title="CLO: 2.6.0\nStart: Jun 01, 2026\nRelease: Jul 31, 2026\n">2.6.0</div>
+                    </div>
+                    <div class="timeline-row">
+                        <div class="release-bar clo planned" style="left: 57.51633986928104%; width: 12.745098039215685%;" title="CLO: 2.8.0\nStart: Aug 24, 2026\nRelease: Oct 02, 2026\n">2.8.0</div>
+                    </div>
+                    <div class="timeline-row">
+                        <div class="release-bar clo planned" style="left: 80.3921568627451%; width: 10.457516339869281%;" title="CLO: 2.10.0\nStart: Nov 02, 2026\nRelease: Dec 04, 2026\n">2.10.0</div>
+                    </div>
+                    <div class="timeline-row">
+                        <div class="release-bar dis planned" style="left: 0%; width: 13.071895424836603%;" title="DIS: 1.0\nStart: Sep 01, 2025\nRelease: Apr 10, 2026\nInternal MVP Release\n">1.0</div>
+                    </div>
+                    <div class="timeline-row">
+                        <div class="release-bar dis planned" style="left: 14.052287581699346%; width: 8.169934640522875%;" title="DIS: 1.1\nStart: Apr 13, 2026\nRelease: May 08, 2026\nInternal MVP Enhancements Release\n">1.1</div>
+                    </div>
+                    <div class="timeline-row">
+                        <div class="release-bar dis planned" style="left: 23.202614379084967%; width: 8.169934640522875%;" title="DIS: 1.2\nStart: May 11, 2026\nRelease: Jun 05, 2026\nExternal MVP Release\n">1.2</div>
+                    </div>
+                    <div class="timeline-row">
+                        <div class="release-bar dis planned" style="left: 32.35294117647059%; width: 8.169934640522875%;" title="DIS: 1.3\nStart: Jun 08, 2026\nRelease: Jul 03, 2026\nLender Ref/MM Production Release\n">1.3</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="tooltip" class="tooltip"></div>
+</body>
+</html>
