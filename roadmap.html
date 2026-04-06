@@ -347,11 +347,11 @@ Deal Override enhancements">2.2.0</div>
         
         releaseBars.forEach(bar => {
             bar.addEventListener('mouseenter', (e) => {
-                const tooltipText = bar.getAttribute('data-tooltip');
+                let tooltipText = bar.getAttribute('data-tooltip');
                 if (tooltipText) {
-                    // Split on the literal 
- characters (2 chars: backslash and n)
-                    const lines = tooltipText.split('\n').filter(line => line.trim());
+                    // Replace literal backslash-n with actual line break for splitting
+                    tooltipText = tooltipText.replace(/\n/g, '|||LINEBREAK|||');
+                    const lines = tooltipText.split('|||LINEBREAK|||').filter(line => line.trim());
                     let html = '';
                     
                     lines.forEach((line, index) => {
