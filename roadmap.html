@@ -349,8 +349,9 @@ Deal Override enhancements">2.2.0</div>
             bar.addEventListener('mouseenter', (e) => {
                 const tooltipText = bar.getAttribute('data-tooltip');
                 if (tooltipText) {
-                    // Format the tooltip content nicely - split on actual newlines
-                    const lines = tooltipText.split(/\n/).filter(line => line.trim());
+                    // Split on the literal 
+ characters (2 chars: backslash and n)
+                    const lines = tooltipText.split('\n').filter(line => line.trim());
                     let html = '';
                     
                     lines.forEach((line, index) => {
